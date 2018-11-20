@@ -71,3 +71,7 @@ List<Order> findByDeliveryCityOrderByDeliveryTo(String city);
 @Query("Order o where o.deliveryCity='Seattle'")
 List<Order> readOrdersDeliveredInSeattle();
 * You can use @Query to perform virtually any query you can dream up, even when it's difficult or impossible to achieve the query by following the naming convention.
+
+The DesignTacoController class is annotated with @SessionAttributes("order"), which specifies any model objects like the order attribute that should be kept in session and available across multiple requests so that you can create multiple tacos and add them to the order. And it also has two @ModelAttribute annotated methods, order() and design(), which ensure that an Order object and a Taco object will be created in the model. The Order parameter annotated with @ModelAttribute in the processDesign() method indicates that, unlike the Taco object, its value should come from the model and that Spring MVC shouldn't attempt to bind request parameters to it.
+
+In the processOrder() method of the OrderController class, the Order object submitted in the form is saved via the save() method on the injected OrderRepository. The method asks for a SessionStatus parameter and calls its setComplete() method to reset the session.
