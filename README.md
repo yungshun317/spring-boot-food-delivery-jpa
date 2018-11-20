@@ -75,3 +75,39 @@ List<Order> readOrdersDeliveredInSeattle();
 The DesignTacoController class is annotated with @SessionAttributes("order"), which specifies any model objects like the order attribute that should be kept in session and available across multiple requests so that you can create multiple tacos and add them to the order. And it also has two @ModelAttribute annotated methods, order() and design(), which ensure that an Order object and a Taco object will be created in the model. The Order parameter annotated with @ModelAttribute in the processDesign() method indicates that, unlike the Taco object, its value should come from the model and that Spring MVC shouldn't attempt to bind request parameters to it.
 
 In the processOrder() method of the OrderController class, the Order object submitted in the form is saved via the save() method on the injected OrderRepository. The method asks for a SessionStatus parameter and calls its setComplete() method to reset the session.
+
+H2 notes:
+
+Because we have Spring Boot DevTools in place, we can access the H2 Console via http://localhost:8080/h2-console. The login informations you need to enter are as below:
+
+Login:
+  Saved Settings: Generic H2 (Embedded)
+  Setting Name: Generic H2 (Embedded)
+
+  Driver Class: org.h2.Driver
+  JDBC URL: jdbc:h2:mem:testdb
+  User Name: sa
+  Password: 
+
+Then click on Connect. In fact, the two .sql files placed in src/main/resources/ are not required thanks to JPA. You can copy and paste the statements in data.sql to preload the ingredient data into H2. 
+
+We also add spring.jpa.show-sql=true to the application.properties file to print SQL commands used by Hibernate. They are:
+
+Hibernate: drop table ingredient if exists
+Hibernate: drop table taco if exists
+Hibernate: drop table taco_ingredients if exists
+Hibernate: drop table taco_order if exists
+Hibernate: drop table taco_order_tacos if exists
+Hibernate: drop sequence if exists hibernate_sequence
+Hibernate: create sequence hibernate_sequence start with 1 increment by 1
+Hibernate: create table ingredient (id varchar(255) not null, name varchar(255), type integer, primary key (id))
+Hibernate: create table taco (id bigint not null, created_at timestamp, name varchar(255) not null, primary key (id))
+Hibernate: create table taco_ingredients (taco_id bigint not null, ingredients_id varchar(255) not null)
+Hibernate: create table taco_order (id bigint not null, cccvv varchar(255), cc_expiration varchar(255), cc_number varchar(255), delivery_city varchar(255), delivery_name varchar(255), delivery_state varchar(255), delivery_street varchar(255), delivery_zip varchar(255), placed_at timestamp, primary key (id))
+Hibernate: create table taco_order_tacos (order_id bigint not null, tacos_id bigint not null)
+Hibernate: alter table taco_ingredients add constraint FK7y679y77n5e75s3ss1v7ff14j foreign key (ingredients_id) references ingredient
+Hibernate: alter table taco_ingredients add constraint FK27rycuh3mjaepnba0j6m8xl4q foreign key (taco_id) references taco
+Hibernate: alter table taco_order_tacos add constraint FKfwvqtnjfview9e5f7bfqtd1ns foreign key (tacos_id) references taco
+Hibernate: alter table taco_order_tacos add constraint FKcxwvdkndaqmrxcen10vkneexo foreign key (order_id) references taco_order
+
+
